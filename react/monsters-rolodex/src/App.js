@@ -1,11 +1,10 @@
 import { Component } from 'react'
 
-import logo from './logo.svg';
+import CardList from './components/card-list/card-list.component'
 import './App.css';
 
 class App extends Component {
   constructor(){
-    console.log('constructor')
     super(); //calls the constructor of the underlying component
 
     this.state = {
@@ -16,7 +15,6 @@ class App extends Component {
 
  //componentDidMount runs only once when the component is mounted
   componentDidMount(){
-    console.log('componentDidMount')
     //fetch is a promise
      fetch('https://jsonplaceholder.typicode.com/users')
       .then((response)=> response.json()) //convert response to json
@@ -24,9 +22,6 @@ class App extends Component {
         this.setState(
           () => {
             return {monsters: users}; //sets array to eq. user
-          },
-          () =>{
-            console.log(this.state);
           }
         )
       }) 
@@ -40,7 +35,6 @@ class App extends Component {
   }
 
   render() {
-    console.log('render')
     //cast this.state to in scope variables
     const { monsters, searchString } = this.state 
     const { onSearchChange }= this
@@ -51,14 +45,15 @@ class App extends Component {
     return (
       <div className="App">
         <input className='search-box' type='search' placeholder='Search Monster' onChange={onSearchChange} />
-
+{/* 
         {filteredMonsters.map((monster)=>{ //maps iterated monsters object to monster object
           return ( //key is used by React to identify what component needs to be re-rendered
             <div key={monster.id}>
             <h1>{monster.name}</h1> 
             </div>
           )
-        })}
+        })} */}
+        <CardList monsters={filteredMonsters} />
       </div>
     );
   }
