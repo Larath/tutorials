@@ -1,6 +1,7 @@
 import { Component } from 'react'
 
 import CardList from './components/card-list/card-list.component'
+import SearchItem from './components/search-box/search-box.component';
 import './App.css';
 
 class App extends Component {
@@ -44,15 +45,8 @@ class App extends Component {
 
     return (
       <div className="App">
-        <input className='search-box' type='search' placeholder='Search Monster' onChange={onSearchChange} />
-{/* 
-        {filteredMonsters.map((monster)=>{ //maps iterated monsters object to monster object
-          return ( //key is used by React to identify what component needs to be re-rendered
-            <div key={monster.id}>
-            <h1>{monster.name}</h1> 
-            </div>
-          )
-        })} */}
+        <SearchItem className="search-box" placeholder="Search Monster" onChange={onSearchChange}  />
+
         <CardList monsters={filteredMonsters} />
       </div>
     );
