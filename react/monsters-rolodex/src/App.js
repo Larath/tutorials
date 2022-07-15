@@ -1,56 +1,49 @@
-import { Component } from 'react'
+import { useState, useEffect } from 'react';
 
 import CardList from './components/card-list/card-list.component'
-import SearchItem from './components/search-box/search-box.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 
-class App extends Component {
-  constructor(){
-    super(); //calls the constructor of the underlying component
-
-    this.state = {
-      monsters:[], //array
-      searchString: ''
-    };
-  }
-
- //componentDidMount runs only once when the component is mounted
-  componentDidMount(){
-    //fetch is a promise
-     fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response)=> response.json()) //convert response to json
-       .then((users) => { //from the response create user
-        this.setState(
-          () => {
-            return {monsters: users}; //sets array to eq. user
-          }
-        )
-      }) 
-  }
+const App = () => {
+  console.log('render')
+  //useState is an array of [value,setValue]
+  const [searchField, setSearchField] = useState(''); //useState replaces the setState from class components. This is an array destructure
+  const [monsters, setMonsters] = useState([]);
+  const [filteredMonsters, setFilterMonsters] = useState(monsters);
   
-  onSearchChange = (event) => {
-    const searchString = event.target.value.toLowerCase();
-    this.setState(()=>{
-      return {searchString} //do not need to explicitly use searchString: searchString. The name of the variable matches the name of the state property
-    })
-  }
+  useEffect(() => {
+    //console.log('monster list render')
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response)=> response.json()) //convert response to json
+     .then((users) => setMonsters(users))
+  }, []);  //runs on first mount or if the array values have changed. In this case an empty array is used to only load 1 time when it is mounted.
 
-  render() {
-    //cast this.state to in scope variables
-    const { monsters, searchString } = this.state 
-    const { onSearchChange }= this
-    const filteredMonsters = monsters.filter((monster)=>{
-      return monster.name.toLowerCase().includes(searchString); //create a new list of monsters to allow us to get back to the original list of monsters
+  useEffect(() => {
+    //console.log('searching...')
+    const newFilteredMonsters = monsters.filter((monster)=>{
+      return monster.name.toLowerCase().includes(searchField); //create a new list of monsters to allow us to get back to the original list of monsters
     });
 
-    return (
-      <div className="App">
-        <h1 className="app-title">Monsters Rolodex</h1>
-        <SearchItem className="monsters-search-box" placeholder="Search Monster" onChange={onSearchChange}  />
-        <CardList monsters={filteredMonsters} />
-      </div>
-    );
+    setFilterMonsters(newFilteredMonsters)
+  }, [monsters, searchField]) //runs on first mount or if either monsters or searchfield changes
+  
+  const onSearchChange = (event) => {
+    console.log("searching")
+    const searchFieldString = event.target.value.toLowerCase();
+    setSearchField(searchFieldString)  
   }
+
+  return(
+    <div className="App">
+    <h1 className="app-title">Monsters Rolodex</h1>
+    <SearchBox 
+      className="monsters-search-box" 
+      placeholder="Search Monsters" 
+      onChangeHandler={ onSearchChange }  
+    />
+     <CardList monsters={filteredMonsters} />
+  </div>
+  )
 }
 
 export default App;
